@@ -1,0 +1,32 @@
+{
+  "name": "ai-engineering-summary",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AI-powered engineering digest CLI tool",
+  "main": "src/index.tsx",
+  "bin": {
+    "eng-digest": "./src/index.tsx"
+  },
+  "scripts": {
+    "dev": "bun run src/index.tsx",
+    "start": "bun run src/index.tsx",
+    "digest": "bun run src/index.tsx digest",
+    "example": "bun run src/index.tsx digest --owner=facebook --repo=react --since=168"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^1.0.0",
+    "@octokit/rest": "^21.0.0",
+    "ai": "^4.0.0",
+    "commander": "^12.0.0",
+    "dotenv": "^16.4.0",
+    "ink": "^5.0.0",
+    "ink-spinner": "^5.0.0",
+    "react": "^18.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.0",
+    "typescript": "^5.5.0"
+  }
+}
+
