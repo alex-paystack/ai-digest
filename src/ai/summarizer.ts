@@ -1,6 +1,6 @@
-import { openai } from '@ai-sdk/openai';
-import { generateText } from 'ai';
-import type { DigestData } from '../github/types.js';
+import { openai } from "@ai-sdk/openai";
+import { generateText } from "ai";
+import type { DigestData } from "../github/types.js";
 
 function buildPrompt(data: DigestData): string {
   const { prs, groupedPRs, riskyPRs, workflows, deployments } = data;
@@ -26,7 +26,7 @@ Time Period: Last ${Math.round((Date.now() - data.since.getTime()) / (1000 * 60 
       prompt += `  Files: ${pr.changedFiles}, Lines: +${pr.additions}/-${pr.deletions}\n`;
       prompt += `  Risk: ${((pr.riskScore || 0) * 100).toFixed(0)}%\n`;
     }
-    prompt += '\n';
+    prompt += "\n";
   }
 
   // Risky PRs
@@ -37,18 +37,18 @@ Time Period: Last ${Math.round((Date.now() - data.since.getTime()) / (1000 * 60 
       prompt += `  Risk factors: ${pr.changedFiles} files, ${pr.additions + pr.deletions} lines`;
       const hasTests = pr.filesChanged.some((f) => /test|spec/.test(f));
       if (!hasTests) {
-        prompt += ', no tests added';
+        prompt += ", no tests added";
       }
       if (pr.timeToMergeHours > 72) {
         prompt += `, took ${Math.round(pr.timeToMergeHours)}h to merge`;
       }
-      prompt += '\n';
+      prompt += "\n";
     }
-    prompt += '\n';
+    prompt += "\n";
   }
 
   // CI Status
-  const failedWorkflows = workflows.filter((w) => w.conclusion === 'failure');
+  const failedWorkflows = workflows.filter((w) => w.conclusion === "failure");
   if (failedWorkflows.length > 0) {
     prompt += `## CI Failures (${failedWorkflows.length})\n\n`;
     for (const workflow of failedWorkflows.slice(0, 3)) {
@@ -58,7 +58,7 @@ Time Period: Last ${Math.round((Date.now() - data.since.getTime()) / (1000 * 60 
         prompt += `  Failed job: ${job.name}\n`;
       }
     }
-    prompt += '\n';
+    prompt += "\n";
   }
 
   // Deployments
@@ -67,11 +67,11 @@ Time Period: Last ${Math.round((Date.now() - data.since.getTime()) / (1000 * 60 
     for (const deployment of deployments.slice(0, 3)) {
       prompt += `- ${deployment.environment} @ ${deployment.createdAt.toLocaleTimeString()}`;
       if (deployment.prNumbers && deployment.prNumbers.length > 0) {
-        prompt += ` (PRs: ${deployment.prNumbers.map((n) => `#${n}`).join(', ')})`;
+        prompt += ` (PRs: ${deployment.prNumbers.map((n) => `#${n}`).join(", ")})`;
       }
-      prompt += '\n';
+      prompt += "\n";
     }
-    prompt += '\n';
+    prompt += "\n";
   }
 
   prompt += `
@@ -88,15 +88,12 @@ Keep it concise and actionable. Focus on what matters to the team.`;
   return prompt;
 }
 
-export async function generateDigestSummary(
-  data: DigestData,
-  apiKey: string
-): Promise<string> {
+export async function generateDigestSummary(data: DigestData): Promise<string> {
   const prompt = buildPrompt(data);
 
   try {
     const { text } = await generateText({
-      model: openai('gpt-4-turbo', { apiKey }),
+      model: openai("gpt-5"),
       prompt,
       maxTokens: 1000,
       temperature: 0.7,
@@ -104,8 +101,7 @@ export async function generateDigestSummary(
 
     return text;
   } catch (error) {
-    console.error('Error generating AI summary:', error);
+    console.error("Error generating AI summary:", error);
     throw error;
   }
 }
-

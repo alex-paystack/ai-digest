@@ -12,6 +12,13 @@ export interface PullRequest {
   timeToMergeHours: number;
   author: string;
   riskScore?: number;
+  aiRiskAnalysis?: {
+    riskScore: number;
+    riskFactors: string[];
+    reasoning: string;
+    concerns: string[];
+    recommendations: string[];
+  };
 }
 
 export interface WorkflowRun {

@@ -5,14 +5,13 @@ An AI-powered CLI tool that generates daily (or on-demand) engineering digests f
 ## Features
 
 - **Smart PR Analysis**: Fetches and analyzes merged pull requests with metadata
-- **Risk Assessment**: Calculates risk scores based on:
-  - Lines of code changed (40% weight)
-  - Number of files changed (30% weight)
-  - Missing tests (20% weight)
-  - Time to merge >72h (10% weight)
+- **Risk Assessment**: Two modes:
+  - **Formula-based** (default): Fast, consistent scoring based on size, files, tests, and time
+  - **AI-enhanced** (optional): Deep contextual analysis using GPT-5 for critical PRs
 - **CI/CD Monitoring**: Tracks workflow runs, failures, and flaky tests
 - **Deployment Tracking**: Monitors GitHub deployment events with PR associations
 - **AI-Powered Summaries**: Uses OpenAI GPT-4 to generate actionable insights
+- **File Output**: Save digests as markdown for sharing and archiving
 - **Beautiful CLI Output**: Built with React-Ink for a modern terminal experience
 
 ## Tech Stack
@@ -57,6 +56,9 @@ bun run src/index.tsx digest --owner=facebook --repo=react
 - `--owner <owner>`: GitHub repository owner/organization (required)
 - `--repo <repo>`: GitHub repository name (required)
 - `--since <hours>`: Hours to look back (default: 24)
+- `--output <path>`: Write digest to file in markdown format (optional)
+- `--ai-risk`: Enable AI-powered risk scoring for more accurate analysis (optional)
+- `--ai-risk-threshold <0-1>`: Formula risk threshold for AI analysis (default: 0.5)
 
 ### Examples
 
@@ -69,9 +71,27 @@ bun run src/index.tsx digest --owner=microsoft --repo=vscode --since=48
 
 # Last week
 bun run src/index.tsx digest --owner=facebook --repo=react --since=168
+
+# Save digest to file
+bun run src/index.tsx digest --owner=myorg --repo=myrepo --output=digest.md
+
+# Weekly digest saved to file
+bun run src/index.tsx digest --owner=myorg --repo=myrepo --since=168 --output=weekly-digest-$(date +%Y-%m-%d).md
+
+# AI-enhanced risk scoring (analyzes high-risk PRs with GPT-4)
+bun run src/index.tsx digest --owner=myorg --repo=myrepo --ai-risk --ai-risk-threshold=0.5
+
+# Full AI analysis with file output
+bun run src/index.tsx digest --owner=myorg --repo=myrepo --ai-risk --output=digest.md
 ```
 
+> **Note**: See [AI-RISK-SCORING.md](./AI-RISK-SCORING.md) for detailed documentation on AI-powered risk analysis.
+
 ## Output
+
+The digest is displayed in the terminal with beautiful formatting, and can optionally be saved to a markdown file.
+
+### Terminal Output
 
 The digest includes:
 
@@ -119,6 +139,19 @@ Recent deployment events:
 - Environment
 - Timestamp
 - Associated PRs
+
+### File Output
+
+When using `--output`, the digest is saved as a markdown file with:
+
+- Properly formatted headers and sections
+- Clickable links to PRs, workflows, and commits
+- Tables and lists for easy reading
+- Perfect for:
+  - Sharing with team via Slack/email
+  - Archiving in documentation
+  - Tracking project history
+  - Creating weekly/monthly reports
 
 ## Risk Calculation
 

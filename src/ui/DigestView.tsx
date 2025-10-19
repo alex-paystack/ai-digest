@@ -41,7 +41,7 @@ export function PRItem({ pr }: { pr: PullRequest }) {
         <Text color="cyan">#{pr.number}</Text>
         <Text>{pr.title}</Text>
         {pr.riskScore !== undefined && (
-          <RiskBadge score={pr.riskScore} color={riskColor} />
+          <RiskBadge score={pr.riskScore} color={riskColor} hasAI={!!pr.aiRiskAnalysis} />
         )}
       </Box>
       <Box marginLeft={2}>
@@ -50,6 +50,16 @@ export function PRItem({ pr }: { pr: PullRequest }) {
           {pr.labels.length > 0 && ` • ${pr.labels.join(', ')}`}
         </Text>
       </Box>
+      {pr.aiRiskAnalysis && (
+        <Box marginLeft={2} flexDirection="column">
+          <Text dimColor>🤖 AI: {pr.aiRiskAnalysis.reasoning}</Text>
+          {pr.aiRiskAnalysis.concerns.length > 0 && (
+            <Text color="yellow">
+              ⚠️  {pr.aiRiskAnalysis.concerns.slice(0, 2).join(', ')}
+            </Text>
+          )}
+        </Box>
+      )}
       <Box marginLeft={2}>
         <Text dimColor>{pr.url}</Text>
       </Box>
@@ -57,10 +67,10 @@ export function PRItem({ pr }: { pr: PullRequest }) {
   );
 }
 
-export function RiskBadge({ score, color }: { score: number; color: string }) {
+export function RiskBadge({ score, color, hasAI }: { score: number; color: string; hasAI?: boolean }) {
   return (
     <Text color={color as any}>
-      [Risk: {(score * 100).toFixed(0)}%]
+      {hasAI && '🤖 '}[Risk: {(score * 100).toFixed(0)}%]
     </Text>
   );
 }
